@@ -5,6 +5,7 @@ from schemas.schemas import User
 from typing import Dict
 from providers.hash_providers import Hash
 from errors.types.http_bad_request import HttpBadRequestError
+from schemas.schemas import UserSimple
 
 
 # aqui vai ser a regra de negocios do user_register
@@ -24,7 +25,9 @@ class UserRegisterService(UserRegisterServiceInterface):
         hash_password = self.hash.create_hash(user.password)
         user.password = hash_password
 
-        return self.user_repository.insert_user(user)
+        users = self.user_repository.insert_user(user)
+        response = self.__format_response(users)
+        return response
 
     # aqui usando um erro personalizado
     @classmethod
@@ -32,7 +35,7 @@ class UserRegisterService(UserRegisterServiceInterface):
         if not first_name.isalpha():
             raise HttpBadRequestError('O nome deve ter a penas letras')
 
-    # aqui usando o error diretoda framework
+    # aqui usando o error direto da framework
     @classmethod
     def __validate_email(cls, email: str):
         if not email or "@" not in email:
@@ -44,3 +47,16 @@ class UserRegisterService(UserRegisterServiceInterface):
         if not password or len(password) < 6:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='O campo password é obrigatório e deve ter pelo menos 6 caracteres')
+
+    @classmethod
+    def __format_response(cls, user: UserSimple):
+        '''Respose model'''
+        response = {
+            "Type": "Users",
+            "attributes": {
+                "id": user.id,
+                "first_name": user.first_name,
+                "email": user.email
+            }
+        }
+        return response

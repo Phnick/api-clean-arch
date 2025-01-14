@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
-from schemas.schemas import User
+from sqlalchemy import select
+from schemas.schemas import User, UserSimple
 from infra.db.entities import models
+from typing import List
 from data.interface.repository_user import UserRepositoryInterface
 
 
@@ -17,4 +19,10 @@ class UserRepository(UserRepositoryInterface):
         self.db.add(db_user)
         self.db.commit()
         self.db.refresh(db_user)
+        return db_user
+
+    def select_user(self, first_name: str):
+        db_user = self.db.query(models.RegisterUser).filter(
+            models.RegisterUser.first_name == first_name).all()
+
         return db_user

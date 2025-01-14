@@ -9,8 +9,10 @@ from typing import Callable
 # O adaptador pega a requisição da framework (no caso, FastAPI) e adapta ela para o formato que o controlador entende.
 
 async def request_adapter(request: RequestFastApi, controller: Callable) -> HttpResponse:
-    body = await request.json()
-
+    try:
+        body = await request.json()
+    except ValueError:
+        body = None
     # Converte o `request` da framework (FastAPI) para um formato genérico
     http_request = HttpRequest(
         body=body,

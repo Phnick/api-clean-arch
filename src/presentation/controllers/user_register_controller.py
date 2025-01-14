@@ -26,9 +26,9 @@ class UserRegisterController(ControllerInterface):
 
         response = self.__use_case.create_user(user)
 
-        response_model = UserSimple.from_orm(response)
+        # response_model = UserSimple.from_orm(response)
 
         return HttpResponse(
             status_code=201,
-            body=response_model.dict()
+            body=response
         )
