@@ -20,3 +20,13 @@ class UserSimple(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class Login(BaseModel):
+    email: str
+    password: str
+
+
+class LoginSucces(BaseModel):
+    user: UserSimple
+    token: str

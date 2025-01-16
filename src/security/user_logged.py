@@ -1,12 +1,11 @@
 from data.interface.repository_user import UserRepositoryInterface
-from domain.use_cases.user_logged import UserLoggedServiceInterface
 from errors.types.http_bad_request import HttpBadRequestError
 from errors.types.http_not_found import HttpNotFoundError
 from providers.token_providers import TokenJwt
 from jose import JWTError
 
 
-class UserLoggedService(UserLoggedServiceInterface):
+class UserLoggedService():
     def __init__(self, user_repository: UserRepositoryInterface):
         self.user_repository = user_repository
         self.tokenjwt = TokenJwt()
