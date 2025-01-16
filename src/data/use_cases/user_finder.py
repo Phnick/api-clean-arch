@@ -25,7 +25,7 @@ class UserFinderService(UserFinderServiceInterface):
     def __search_user(self, first_name: str):
         users = self.__user_repository.select_user(first_name)
         if not users:
-            raise HttpNotFoundError('Usuário não encontrado')
+            raise HttpNotFoundError('Nome não encontrado')
 
         return users
 

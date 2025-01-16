@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from main.adapters.request_adapter import request_adapter
 from main.composers.user_register_composer import user_register_composer
 from main.composers.user_finder_composer import user_finder_composer
+from main.composers.user_finder_id_composer import user_finder_id_composer
 from infra.db.settings.connection import get_db
 from fastapi import Depends
 from sqlalchemy.orm import Session
@@ -13,7 +14,7 @@ router = APIRouter()
 #  rota sem a necessidade exclusiva de uma framework
 
 
-@router.post('/api/v1/register')
+@router.post('/api/v1/user/register')
 async def register(request: Request, db: Session = Depends(get_db)):
     controller = user_register_composer(db)
     try:
@@ -33,6 +34,19 @@ async def find_user(request: Request, db: Session = Depends(get_db)):
     controller = user_finder_composer(db)
     try:
         http_response = await request_adapter(request, controller)
+    except Exception as exception:
+        http_response = handler_error(exception)
+    return JSONResponse(
+        status_code=http_response.status_code,
+        content=http_response.body
+    )
+
+
+@router.get('/api/v1/user/finder/{id}')
+async def find_user_id(request: Request, db: Session = Depends(get_db)):
+    controler = user_finder_id_composer(db)
+    try:
+        http_response = await request_adapter(request, controler)
     except Exception as exception:
         http_response = handler_error(exception)
     return JSONResponse(

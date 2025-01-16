@@ -7,6 +7,8 @@ from data.interface.repository_user import UserRepositoryInterface
 
 
 class UserRepository(UserRepositoryInterface):
+    '''Repository User'''
+
     def __init__(self, db: Session):
         self.db = db
 
@@ -25,4 +27,9 @@ class UserRepository(UserRepositoryInterface):
         db_user = self.db.query(models.RegisterUser).filter(
             models.RegisterUser.first_name == first_name).all()
 
+        return db_user
+
+    def select_user_id(self, id: int):
+        db_user = self.db.query(models.RegisterUser).filter(
+            models.RegisterUser.id == id).scalar()
         return db_user
