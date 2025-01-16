@@ -15,3 +15,7 @@ class UserRepositoryInterface(ABC):
     @abstractmethod
     def select_user_id(self, id: int):
         pass
+
+    @abstractmethod
+    def get_email(self, email: str):
+        pass

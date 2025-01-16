@@ -1,12 +1,9 @@
-from fastapi import Request, APIRouter, status
+from fastapi import Request, APIRouter
 from fastapi.responses import JSONResponse
 from main.adapters.request_adapter import request_adapter
 from main.composers.user_register_composer import user_register_composer
 from main.composers.user_finder_composer import user_finder_composer
 from main.composers.user_finder_id_composer import user_finder_id_composer
-from infra.db.settings.connection import get_db
-from fastapi import Depends
-from sqlalchemy.orm import Session
 from errors.error_handler import handler_error
 
 router = APIRouter()
@@ -15,23 +12,21 @@ router = APIRouter()
 
 
 @router.post('/api/v1/user/register')
-async def register(request: Request, db: Session = Depends(get_db)):
-    controller = user_register_composer(db)
+async def register(request: Request):
+    controller = user_register_composer()
     try:
         http_response = await request_adapter(request, controller)
     except Exception as exception:
         http_response = handler_error(exception)
-    # return http_response.body, http_response.status_code
     return JSONResponse(
         status_code=http_response.status_code,
         content=http_response.body
     )
-    # JSONResponse é especifico  da framework, ou seja estou fazendo com que meu htt_reponse retorne confome ela
 
 
 @router.get('/api/v1/user/finder')
-async def find_user(request: Request, db: Session = Depends(get_db)):
-    controller = user_finder_composer(db)
+async def find_user(request: Request):
+    controller = user_finder_composer()
     try:
         http_response = await request_adapter(request, controller)
     except Exception as exception:
@@ -43,8 +38,9 @@ async def find_user(request: Request, db: Session = Depends(get_db)):
 
 
 @router.get('/api/v1/user/finder/{id}')
-async def find_user_id(request: Request, db: Session = Depends(get_db)):
-    controler = user_finder_id_composer(db)
+async def find_user_id(request: Request):
+
+    controler = user_finder_id_composer()
     try:
         http_response = await request_adapter(request, controler)
     except Exception as exception:

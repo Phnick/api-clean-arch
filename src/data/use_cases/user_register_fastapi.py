@@ -4,14 +4,11 @@ from domain.use_cases.user_register import UserRegisterServiceInterface
 from schemas.schemas import User
 from typing import Dict
 from providers.hash_providers import Hash
-from errors.types.http_bad_request import HttpBadRequestError
-from schemas.schemas import UserSimple
 
 
-# aqui vai ser a regra de negocios do user_register
+class UserRegisterServiceFastapi(UserRegisterServiceInterface):
+    '''Aqui eu uso a framewok direto'''
 
-
-class UserRegisterService(UserRegisterServiceInterface):
     def __init__(self, user_repository: UserRepositoryInterface):
         self.user_repository = user_repository
         self.hash = Hash()
@@ -26,35 +23,23 @@ class UserRegisterService(UserRegisterServiceInterface):
         user.password = hash_password
 
         users = self.user_repository.insert_user(user)
-        response = self.__format_response(users)
-        return response
+
+        return users
 
     @classmethod
     def __validate_name(cls, first_name: str):
         if not first_name.isalpha():
-            raise HttpBadRequestError('O nome deve ter a penas letras')
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                                detail='O campo deve ter a penas letras.')
 
     @classmethod
     def __validate_email(cls, email: str):
         if not email or "@" not in email:
-            raise HttpBadRequestError(
-                'O campo email é obrigatório e deve ser válido.')
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                                detail='O campo email é obrigatório e deve ser válido.')
 
     @classmethod
     def __validate_password(cls, password):
         if not password or len(password) < 6:
-            raise HttpBadRequestError(
-                'O campo password é obrigatório e deve ter pelo menos 6 caracteres')
-
-    @classmethod
-    def __format_response(cls, user: UserSimple):
-        '''Respose model'''
-        response = {
-            "Type": "Users",
-            "attributes": {
-                "id": user.id,
-                "first_name": user.first_name,
-                "email": user.email
-            }
-        }
-        return response
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                                detail='O campo password é obrigatório e deve ter pelo menos 6 caracteres')
