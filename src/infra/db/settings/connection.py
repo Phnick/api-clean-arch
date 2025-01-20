@@ -2,6 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import os
 from dotenv import load_dotenv
+from infra.db.settings.base import Base
 
 load_dotenv()
 
@@ -17,6 +18,9 @@ class DBConnectionHandler:
     def __create_database_engine(self):
         engine = create_engine(self.__connection_string)
         return engine
+
+    def create_table(self):
+        Base.metadata.create_all(bind=self.__engine)
 
     def get_engine(self):
         return self.__engine

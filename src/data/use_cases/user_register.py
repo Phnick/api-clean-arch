@@ -1,4 +1,4 @@
-from fastapi import HTTPException, status
+
 from data.interface.repository_user import UserRepositoryInterface
 from domain.use_cases.user_register import UserRegisterServiceInterface
 from schemas.schemas import User
@@ -6,9 +6,7 @@ from typing import Dict
 from providers.hash_providers import Hash
 from errors.types.http_bad_request import HttpBadRequestError
 from schemas.schemas import UserSimple
-
-
-# aqui vai ser a regra de negocios do user_register
+from task import send_email_task
 
 
 class UserRegisterService(UserRegisterServiceInterface):
@@ -27,6 +25,7 @@ class UserRegisterService(UserRegisterServiceInterface):
 
         users = self.user_repository.insert_user(user)
         response = self.__format_response(users)
+        send_email_task.delay(user.email)
         return response
 
     @classmethod

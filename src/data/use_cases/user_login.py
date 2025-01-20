@@ -48,8 +48,7 @@ class UserLoginService(UserLoginSericeInterface):
     def __format_response(cls, user: LoginSucces):
         '''Respose model'''
         response = {
-            "Type": "Login",
-            "attributes": {
+            "data": {
                 "user": {
                     "id": user.user.id,
                     "first_name": user.user.first_name,
