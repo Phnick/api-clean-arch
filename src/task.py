@@ -30,6 +30,7 @@ def send_email_task(user_email: str):
     email_service = UserSenderEmailService(sender_email, sender_password)
     try:
         email_service.send_confirmation_email(user_email)
+        return f"Email enviado para {user_email}"
     except Exception as e:
         raise HttpEmailSendError(
             f"Erro ao enviar email para {user_email}: {e}")
